@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabrina Ma | Photography</title>
+
+    <!-- Clean Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* Default Dark Mode */
+        body {
+            background-color: #0d0d0d;
+            color: #f0f0f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Light Mode Override */
+        body.light-mode {
+            background-color: #ffffff;
+            color: #111111;
+        }
+
+        /* Fixed Header Navigation Bar */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.5fr 1.5fr 1fr;
+            gap: 2rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            padding: 2.5rem 3rem 1.5rem 3rem;
+            z-index: 200;
+            background-color: inherit;
+        }
+
+        .header-col label {
+            display: block;
+            color: #888888;
+            margin-bottom: 0.2rem;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .header-col div { font-weight: 500; }
+
+        .nav-links a {
+            text-decoration: none;
+            color: inherit;
+            margin-right: 1.2rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .nav-links a:hover { opacity: 0.5; }
+
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .theme-toggle-btn:hover { opacity: 0.5; }
+
+        /* Slide-down About Drawer */
+        .about-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(13, 13, 13, 0.96);
+            z-index: 150;
+            display: none;
+            padding: 8rem 3rem 3rem 3rem;
+            overflow-y: auto;
+        }
+
+        body.light-mode .about-overlay {
+            background-color: rgba(255, 255, 255, 0.96);
+        }
+
+        .about-overlay.active { display: block; }
+
+        .about-content {
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .about-text p { margin-bottom: 1rem; opacity: 0.9; }
+
+        .about-contact {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .about-contact a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        /* SECTION 1: Clean First Viewport (Strictly 100vh) */
+        .hero-section {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Rectangular Interactive Photo Box */
+        .flicker-box {
+            max-width: 520px;
+            max-height: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .flicker-box img {
+            max-width: 100%;
+            max-height: 380px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+            /* 移除了 transform 缩放动画，保持静态切换 */
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2.5rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #888888;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .scroll-indicator:hover { opacity: 0.6; }
+
+        /* SECTION 2: Work Gallery Container */
+        .work-section {
+            padding: 6rem 3rem 2.5rem 3rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .gallery-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1.5rem;
+            width: 100%;
+            padding-bottom: 2.5rem;
+        }
+
+        .category-card {
+            position: relative;
+            flex: 1;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+        }
+
+        .category-card .img-wrapper {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .category-card img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .category-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #888888;
+            margin-top: 0.6rem;
+            font-weight: 500;
+        }
+
+        .gallery-container:hover .category-card { opacity: 0.4; }
+        .gallery-container .category-card:hover {
+            opacity: 1 !important;
+            transform: translateY(-6px);
+        }
+
+        /* Category Height Proportions */
+        .size-wedding { height: 50vh; }
+        .size-family { height: 35vh; }
+        .size-events { height: 52vh; }
+        .size-architecture { height: 42vh; }
+        .size-lifedoc { height: 58vh; }
+
+        /* Footer Copyright Notice */
+        footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(136, 136, 136, 0.15);
+            text-align: center;
+            font-size: 0.75rem;
+            color: #888888;
+            letter-spacing: 0.05em;
+        }
+
+        /* Fullscreen Sub-Gallery View */
+        .category-view {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: inherit;
+            color: inherit;
+            z-index: 500;
+            padding: 3rem;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+
+        .category-view.active { display: flex; }
+
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: inherit;
+        }
+
+        /* Sub-Gallery Grid */
+        .grid-gallery {
+            column-count: 3;
+            column-gap: 4rem;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .grid-item {
+            display: block;
+            margin-bottom: 4rem;
+            break-inside: avoid;
+            width: 100%;
+        }
+
+        .grid-item img {
+            display: block;
+            height: auto;
+            max-width: 280px;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+
+        @media (max-width: 900px) {
+            .gallery-container { flex-wrap: wrap; }
+            .category-card { flex: 1 1 40%; }
+            .grid-gallery { column-count: 2; column-gap: 2rem; }
+        }
+
+        @media (max-width: 600px) {
+            header { grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.5rem; }
+            .flicker-box { max-width: 90%; }
+            .category-card { flex: 1 1 100%; }
+            .grid-gallery { column-count: 1; }
+            .about-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-col">
+            <label>Photographer</label>
+            <div>SABRINA MA</div>
+        </div>
+        <div class="header-col">
+            <label>Location</label>
+            <div>COPENHAGEN, DENMARK</div>
+        </div>
+        <div class="header-col">
+            <label>Navigation</label>
+            <div class="nav-links">
+                <a onclick="scrollToWork()">Work</a>
+                <a onclick="toggleAbout()">About</a>
+                <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">Light Mode</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Slide-down About Overlay -->
+    <div class="about-overlay" id="about-overlay">
+        <div class="about-content">
+            <div>
+                <strong>About & Contact</strong>
+            </div>
+            <div class="about-text">
+                <p>Hi, I’m Sabrina.</p>
+                <p>I’ve always used photography to document life, capture honest moments, and connect with people. Through taking photos, I get to meet new faces and explore the world.</p>
+                <p>Originally from China, I lived in Japan for 4 years before moving to Copenhagen, Denmark, where I’ve been based for the last 2 years. Alongside photography, I have a background in spatial design, and I love traveling and journaling my life through comics.</p>
+                <p>Right now, I’m constantly exploring where these different creative paths meet. Reach out if you’d like to collaborate, create something meaningful, or capture great memories together.</p>
+                
+                <div class="about-contact">
+                    <div>Email: <a href="mailto:sys2007maxiao@gmail.com">sys2007maxiao@gmail.com</a></div>
+                    <div>Instagram: <a href="https://instagram.com/ani2photo" target="_blank">@ani2photo</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 1: Clean First Viewport -->
+    <section class="hero-section">
+        <div class="flicker-box" id="flicker-box">
+            <img id="flicker-img" src="images/imageslifedoc/1.jpg" alt="Life Documentation Cover">
+        </div>
+        <a class="scroll-indicator" onclick="scrollToWork()">Explore Work ↓</a>
+    </section>
+
+    <!-- SECTION 2: Work Category Section -->
+    <section class="work-section" id="work">
+        <main class="gallery-container">
+            
+            <div class="category-card" onclick="openCategory('wedding')">
+                <div class="img-wrapper size-wedding">
+                    <img src="images/imageswedding/9.jpg" alt="Wedding">
+                </div>
+                <div class="category-label">Wedding</div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('family')">
+                <div class="img-wrapper size-family">
+                    <img src="images/imagesfamily/DSC00788.JPG" alt="Family">
+                </div>
+                <div class="category-label">Family</div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('events')">
+                <div class="img-wrapper size-events">
+                    <img src="images/imagesevents/13.jpg" alt="Events">
+                </div>
+                <div class="category-label">Events</div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('architecture')">
+                <div class="img-wrapper size-architecture">
+                    <img src="images/imagesarchitecture/7.jpg" alt="Architecture">
+                </div>
+                <div class="category-label">Architecture</div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('lifedoc')">
+                <div class="img-wrapper size-lifedoc">
+                    <img src="images/imageslifedoc/1.jpg" alt="Life Documentation">
+                </div>
+                <div class="category-label">Life Documentation</div>
+            </div>
+
+        </main>
+
+        <footer>
+            <p>© 2026 Sabrina Ma. All Rights Reserved.</p>
+        </footer>
+    </section>
+
+    <!-- Fullscreen Sub-Gallery Overlay -->
+    <div class="category-view" id="category-view">
+        <div class="view-header">
+            <h2 id="category-title" style="font-size: 1rem; letter-spacing: 0.08em;">Category Title</h2>
+            <button class="back-btn" onclick="closeCategory()">← Back to Overview</button>
+        </div>
+        <div class="grid-gallery" id="grid-gallery"></div>
+    </div>
+
+    <script>
+        const photoData = {
+            wedding: [
+                "images/imageswedding/1.JPG", "images/imageswedding/2.JPG", "images/imageswedding/3.JPG",
+                "images/imageswedding/4.jpg", "images/imageswedding/5.jpg", "images/imageswedding/6.jpg",
+                "images/imageswedding/7.jpg", "images/imageswedding/8.jpg", "images/imageswedding/9.jpg",
+                "images/imageswedding/10.jpg", "images/imageswedding/11.JPG", "images/imageswedding/12.JPG",
+                "images/imageswedding/13.JPG", "images/imageswedding/14.JPG", "images/imageswedding/15.JPG",
+                "images/imageswedding/16.JPG", "images/imageswedding/17.JPG", "images/imageswedding/18.JPG",
+                "images/imageswedding/21.JPG", "images/imageswedding/22.JPG", "images/imageswedding/23.JPG",
+                "images/imageswedding/25.jpg", "images/imageswedding/26.jpg", "images/imageswedding/28.jpg",
+                "images/imageswedding/29.jpg", "images/imageswedding/30.jpg", "images/imageswedding/31.jpg",
+                "images/imageswedding/32.png", "images/imageswedding/33.png", "images/imageswedding/34.jpg",
+                "images/imageswedding/35.jpg", "images/imageswedding/36.JPG", "images/imageswedding/37.JPG",
+                "images/imageswedding/38.JPG", "images/imageswedding/39.JPG", "images/imageswedding/40.JPG"
+            ],
+            family: [
+                "images/imagesfamily/DSC00298.JPG", "images/imagesfamily/DSC00306.JPG", "images/imagesfamily/DSC00595.JPG",
+                "images/imagesfamily/DSC00772.JPG", "images/imagesfamily/DSC00788.JPG", "images/imagesfamily/DSC00834.JPG",
+                "images/imagesfamily/DSC00837.JPG", "images/imagesfamily/DSC00856.JPG", "images/imagesfamily/DSC00943.JPG",
+                "images/imagesfamily/DSC00984.JPG", "images/imagesfamily/DSC01078.JPG", "images/imagesfamily/DSC01682.JPG",
+                "images/imagesfamily/DSC01939.JPG", "images/imagesfamily/DSC01954.JPG", "images/imagesfamily/DSC09868.JPG",
+                "images/imagesfamily/DSC09886.JPG", "images/imagesfamily/DSC09899.JPG"
+            ],
+            events: [
+                "images/imagesevents/1.JPG", "images/imagesevents/2.JPG", "images/imagesevents/3.jpg",
+                "images/imagesevents/4.jpg", "images/imagesevents/5.jpg", "images/imagesevents/6.jpg",
+                "images/imagesevents/7.jpg", "images/imagesevents/8.jpg", "images/imagesevents/9.jpg",
+                "images/imagesevents/10.jpg", "images/imagesevents/11.JPG", "images/imagesevents/12.jpg",
+                "images/imagesevents/13.jpg", "images/imagesevents/14.JPG"
+            ],
+            architecture: [                
+                "images/imagesarchitecture/1.jpg", "images/imagesarchitecture/2.jpg", "images/imagesarchitecture/3.jpg",
+                "images/imagesarchitecture/4.jpg", "images/imagesarchitecture/5.jpg", "images/imagesarchitecture/6.jpg",
+                "images/imagesarchitecture/7.jpg", "images/imagesarchitecture/8.jpg", "images/imagesarchitecture/9.jpg",
+                "images/imagesarchitecture/10.jpg"
+            ],
+            lifedoc: [ 
+                "images/imageslifedoc/1.jpg", "images/imageslifedoc/2.jpg", "images/imageslifedoc/3.jpg",
+                "images/imageslifedoc/7.jpg"
+            ]
+        };
+
+        /* Hover Photo Switch Logic */
+        const lifedocPhotos = photoData.lifedoc;
+        let photoIndex = 0;
+        const flickerImgEl = document.getElementById('flicker-img');
+        const flickerBoxEl = document.getElementById('flicker-box');
+
+        flickerBoxEl.addEventListener('mouseenter', () => {
+            photoIndex = (photoIndex + 1) % lifedocPhotos.length;
+            flickerImgEl.src = lifedocPhotos[photoIndex];
+        });
+
+        /* UI Interactions */
+        function scrollToWork() {
+            closeAbout();
+            document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAbout() {
+            const overlay = document.getElementById('about-overlay');
+            overlay.classList.toggle('active');
+        }
+
+        function closeAbout() {
+            document.getElementById('about-overlay').classList.remove('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('theme-btn');
+            body.classList.toggle('light-mode');
+            themeBtn.innerText = body.classList.contains('light-mode') ? 'Dark Mode' : 'Light Mode';
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function openCategory(name) {
+            const categoryView = document.getElementById('category-view');
+            const title = document.getElementById('category-title');
+            const grid = document.getElementById('grid-gallery');
+
+            title.innerText = name.toUpperCase();
+            const rawImages = photoData[name] || [];
+            const shuffledImages = shuffleArray(rawImages);
+
+            grid.innerHTML = shuffledImages.map(src => `
+                <div class="grid-item">
+                    <img src="${src}" alt="${name} photo">
+                </div>
+            `).join('');
+
+            categoryView.classList.add('active');
+        }
+
+        function closeCategory() {
+            document.getElementById('category-view').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
